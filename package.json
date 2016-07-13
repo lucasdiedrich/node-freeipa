@@ -1,0 +1,31 @@
+{
+  "name": "node-freeipa",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "repository": "https://github.com/node-freeipa",
+  "author": {
+    "name": "Lucas Diedrich",
+    "email": "lucas.diedrich@gmail.com",
+    "url": "https://github.com/lucasdiedrich"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "files": [
+    "freeipa.js"
+  ],
+  "keywords": [
+    "Freeipa IPA IDM API NodeJS"
+  ],
+  "dependencies": {
+    "promise": "^7.1.1"
+  },
+  "devDependencies": {
+    "ava": "^0.12.0",
+    "xo": "^0.12.1"
+  }
+}
