@@ -1,4 +1,4 @@
-# node-freeipa [![Build Status](https://travis-ci.org/lucasdiedrich/node-freeipa.svg?branch=master)](https://travis-ci.org/lucasdiedrich/node-freeipa)
+# node-freeipa
 
 >
 
@@ -12,16 +12,16 @@ $ npm install --save node-freeipa
 ## Usage
 
 ```js
-const <%= camelModuleName %> = require('node-freeipa');
+const IPA = require('node-freeipa');
 
-<%= camelModuleName %>('unicorns');
-//=> 'unicorns & rainbows'
+IPA.configure();
+IPA.call();
 ```
 
 
 ## API
 
-### <%= camelModuleName %>(input, [options])
+### configure(input, [options])
 
 #### input
 
@@ -41,4 +41,4 @@ Lorem ipsum.
 
 ## License
 
-MIT © [<%= name %>](https://github.com/lucasdiedrich)
+MIT © [Lucas Diedrich](https://github.com/lucasdiedrich)
