@@ -6,17 +6,9 @@ var	Config 	= require('./lib/Config'),
 /*
 	Just an wrapper for call function without the path param. 
 */
-function call(method, args, options, callback)
+function call(method, args, options)
 {
-	var ql = { 
-		method: method, 
-		params: [
-			args || [""],
-			options || {}
-		],
-	};
-
-	return call(URL_JSON, ql, callback);
+	return Req.build(method, args || [""], options || {});
 }
 
 /*
@@ -25,7 +17,6 @@ function call(method, args, options, callback)
 function configure(_options)
 {
 	Config.init(_options);
-	Req	= new ReqBuilder();
 }
 
 module.exports.configure = configure;
