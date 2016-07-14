@@ -1,7 +1,7 @@
 'use strict';
 
-var	Config = require('./lib/Config'),
-	Session = require('./lib/Session');
+var	Config 	= require('./lib/Config'),
+	Req 	= require('./lib/RequestBuilder');
 
 /*
 	Just an wrapper for call function without the path param. 
@@ -24,10 +24,9 @@ function call(method, args, options, callback)
 */
 function configure(_options)
 {
-	Config = new Config(_options);
-
-	// check_session();
-};
+	Config.init(_options);
+	Req	= new ReqBuilder();
+}
 
 module.exports.configure = configure;
 module.exports.call 	 = call;
