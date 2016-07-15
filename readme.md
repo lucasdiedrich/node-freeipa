@@ -96,7 +96,7 @@ ipa.call('user_find',[""],{}).then(function(result) {});
 The 'c' method is created after the client configure the freeipa module by the first time, it call your server and get a list of all possible method you can call. 
 
 Because some times freeipa take a lit bit to return the methods, it should be wait at least 7 seconds before using the class.
-### Usage: ipa.c.some_method([args],{options})
+### Usage: c.some_method([args],{options})
 
 #### args
 
