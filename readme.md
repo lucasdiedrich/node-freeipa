@@ -1,6 +1,6 @@
 # node-freeipa
 
->
+> A module to consume Freeipa Server API using promises.
 
 
 ## Install
@@ -30,13 +30,25 @@ ipa.configure(opts);
 // Using call method
 ipa.call('json_metadata').then(function(result) {
  	console.log(result);
+ 	// Giant list with all methods capable of being requested.
 });
 
 // Using auto-generated client
 setTimeout( function() { 
 	ipa.c.user_find([""],{"uid":'someuser'}).then(function(result){
 		console.log(result);
-	});
+		// [ { dn: 'uid=someuser,cn=users,cn=accounts,dc=unila',
+		//    gidnumber: [ '0003' ],
+		//    givenname: [ 'Some' ],
+		//    has_keytab: true,
+		//    has_password: true,
+		//    homedirectory: [ '/home/someuser' ],
+		//    loginshell: [ '/bin/bash' ],
+		//    mail: [ 'someuser@domain' ],
+		//    nsaccountlock: false,
+		//    sn: [ 'User' ],
+		//    uid: [ 'someuser' ],
+		//	});
 }, 5000);
 
 ```
