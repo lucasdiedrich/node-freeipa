@@ -24,10 +24,13 @@ function configure(_options)
 {
 	Config.init(_options);
 
-	new Client(call).then(function(client)
+	if(global.Config.configure_client)
 	{
-		module.exports.c = client;
-	});
+		new Client(call).then(function(client)
+		{
+			module.exports.c = client;
+		});
+	}
 }
 
 module.exports.configure = configure;

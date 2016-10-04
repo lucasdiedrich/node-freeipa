@@ -74,6 +74,7 @@ var options = {
 	ca: false, //Your Freeipa's CA
 	krb: false, //Not used yet
 	rejectUnauthorized: true, //If you don't use CA this is auto-defined as false.
+	configure_client: true, //Define if should auto-build the client using json api.
 	client_version: "2.156", // Default client version to supress freeipa warning message. 
 };
 ```
