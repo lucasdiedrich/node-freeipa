@@ -14,7 +14,17 @@
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint freeipa.js lib/**",
-    "test": "./node_modules/.bin/mocha tests/**/*.spec.js"
+    "prepush": "npm run lint && npm run test:converage",
+    "test": "./node_modules/.bin/mocha tests/**/*.spec.js",
+    "test:tdd": "./node_modules/.bin/mocha tests/**/*.spec.js --watch",
+    "test:coverage": "./node_modules/.bin/nyc npm test"
+  },
+  "nyc": {
+    "functions": 90,
+    "lines": 90,
+    "check-coverage": true,
+    "reporter": ["text", "html"],
+    "exclude": ["tests/**"]
   },
   "main": "./freeipa.js",
   "keywords": [
