@@ -1,5 +1,4 @@
-// import { expect } from 'chai';
-let { expect } = require('chai');
+const { expect } = require('chai');
 
 describe('Main', () => {
   describe('Method A', () => {
