@@ -1,5 +1,7 @@
 # node-freeipa
 
+[![Build Status](https://travis-ci.org/lucasdiedrich/node-freeipa.svg?branch=master)](https://travis-ci.org/lucasdiedrich/node-freeipa)
+
 > A module to consume Freeipa Server API using promises.
 
 
@@ -15,7 +17,7 @@ $ npm install --save node-freeipa
 var ipa = require('node-freeipa')
 var fs = require('fs');
 
-var opts = { 
+var opts = {
 	server: "ipaserver.yourdomain",
 	ca: fs.readFileSync('ca.crt'), //path of your freeipa ca.crt
 	auth: {
@@ -34,7 +36,7 @@ ipa.call('json_metadata').then(function(result) {
 });
 
 // Using auto-generated client
-setTimeout( function() { 
+setTimeout( function() {
 	ipa.c.user_find([""],{"uid":'someuser'}).then(function(result){
 		console.log(result);
 		// [ { dn: 'uid=someuser,cn=users,cn=accounts,dc=unila',
@@ -75,7 +77,7 @@ var options = {
 	krb: false, //Not used yet
 	rejectUnauthorized: true, //If you don't use CA this is auto-defined as false.
 	configure_client: true, //Define if should auto-build the client using json api.
-	client_version: "2.156", // Default client version to supress freeipa warning message. 
+	client_version: "2.156", // Default client version to supress freeipa warning message.
 };
 ```
 
@@ -106,7 +108,7 @@ ipa.call('user_find',[""],{}).then(function(result) {});
 ```
 
 # Using 'c' method
-The 'c' method is created after the client configure the freeipa module by the first time, it call your server and get a list of all possible method you can call. 
+The 'c' method is created after the client configure the freeipa module by the first time, it call your server and get a list of all possible method you can call.
 
 Because some times freeipa take a lit bit to return the methods, it should be wait at least 7 seconds before using the class.
 ### Usage: c.some_method([args],{options})
