@@ -1,7 +1,7 @@
 # node-freeipa
 
 [![Build Status](https://travis-ci.org/lucasdiedrich/node-freeipa.svg?branch=master)](https://travis-ci.org/lucasdiedrich/node-freeipa)
-
+[![Coverage Status](https://coveralls.io/repos/github/lucasdiedrich/node-freeipa/badge.svg)](https://coveralls.io/github/lucasdiedrich/node-freeipa)
 > A module to consume Freeipa Server API using promises.
 
 

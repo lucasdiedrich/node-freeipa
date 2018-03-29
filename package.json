@@ -17,7 +17,8 @@
     "prepush": "npm run lint && npm run test:converage",
     "test": "./node_modules/.bin/mocha test/bootstrap.spec.js test/**/*.spec.js",
     "test:tdd": "npm run test -- --watch",
-    "test:coverage": "./node_modules/.bin/nyc npm test"
+    "test:coverage": "./node_modules/.bin/nyc npm test",
+    "coveralls": "npm run test:coverage && nyc report --reporter=text-lcov | coveralls"
   },
   "nyc": {
     "functions": 80,
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "coveralls": "^3.0.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.9.0",
