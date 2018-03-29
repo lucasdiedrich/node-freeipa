@@ -12,6 +12,7 @@
   "engines": {
     "node": ">=8.6.0"
   },
+  "files":["lib", "freeipa.js"],
   "scripts": {
     "lint": "./node_modules/.bin/eslint freeipa.js lib/**",
     "prepush": "npm run lint && npm run test:converage",
