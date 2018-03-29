@@ -24,4 +24,11 @@ describe('Dynamic client Consumer', () => {
       done();
     }, timeout);
   }).timeout(timeout + 1000);
+
+  // it('should the client be defined', (done) => {
+  //   setTimeout(() => {
+  //     expect(ipa.c.user_find()).to.exist;
+  //     done();
+  //   }, timeout);
+  // }).timeout(timeout + 1000);
 });

@@ -82,6 +82,7 @@ var options = {
 	rejectUnauthorized: true, //If you don't use CA this is auto-defined as false.
 	configure_client: true, //Define if should auto-build the client using json api.
 	client_version: "2.156", // Default client version to supress freeipa warning message.
+	expires: 86400, // Time in minutes to expiration of cookie/auth.
 };
 ```
 
