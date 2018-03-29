@@ -1,12 +1,13 @@
 {
-    "extends": "airbnb-base",
-    "env": {
-      "node": true,
-      "mocha": true
-    },
-    "rules": {
-      "no-undef": ["off"],
-      "no-trailing-spaces": ["warn"],
-      "no-unused-expressions": ["warn", { "ignore": ["expect"] }]
-    }
+  "extends": "airbnb-base",
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "rules": {
+    "no-undef": ["off"],
+    "no-trailing-spaces": ["warn"],
+    // "no-restricted-syntax": ["WithStatement"],
+    "no-unused-expressions": ["warn"]
+  }
 }

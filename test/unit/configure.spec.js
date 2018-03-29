@@ -1,13 +1,9 @@
 
-const { configure, call } = require('../../freeipa');
-const Client = require('../../lib/Client');
-const Config = require('../../lib/Config');
+const { configure } = require('../../freeipa');
 
 describe('Configure Consumer', () => {
-
   beforeEach(() => {
     global.Config = undefined;
-    global.fx.reset();
   });
 
   it('should be undefined', () => {
@@ -39,5 +35,4 @@ describe('Configure Consumer', () => {
     configure(global.fx.config);
     expect(global.Config.auth_method).to.eql('kerberos');
   });
-
 });

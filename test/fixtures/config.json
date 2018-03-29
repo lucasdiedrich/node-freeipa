@@ -1,7 +1,7 @@
 {
   "server": "ipa.demo1.freeipa.org",
   "auth": {
-      "user": "admin",
+      "user": "helpdesk",
       "pass": "Secret123"
   },
   "configure_client": false

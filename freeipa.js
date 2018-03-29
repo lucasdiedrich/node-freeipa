@@ -1,37 +1,29 @@
-'use strict';
+const Config = require('./lib/Config');
+const Client = require('./lib/Client');
+const Req = require('./lib/RequestBuilder');
 
-var	Config 	= require('./lib/Config'),
-	Client  = require('./lib/Client');
+/**
+ * The caller method which calls the informed METHOD to the final request.
+ * @constructor
+ * @param {string} method - The method that it should call, for example, user_find.
+ * @param {array} args - Freeipa argument to send.
+ * @param {array} options - Freeipa options to send.
+ */
+module.exports.call = function call(method, args, options) {
+  return Req.build(method, args || [''], options || {});
+};
 
-const METADATA = 'json_metadata';
-var client = null;
-var self = this;
+/**
+ * Init config class, rebuild client class with new methods;
+ * @constructor
+ * @param {json} _options - Custom options that should be filled.
+ */
+module.exports.configure = function configure(_options) {
+  Config.init(_options);
 
-/*
-	Just an wrapper for call function without the path param. 
-*/
-function call(method, args, options)
-{
-	var Req = require('./lib/RequestBuilder');
-
-	return Req.build(method, args || [""], options || {});
-}
-
-/*
-	Init config class, rebuild client class with new methods;
-*/
-function configure(_options)
-{
-	Config.init(_options);
-
-	if(global.Config.configure_client)
-	{
-		new Client(call).then(function(client)
-		{
-			module.exports.c = client;
-		});
-	}
-}
-
-module.exports.configure = configure;
-module.exports.call = call;
+  if (global.Config.configure_client) {
+    new Client(this.call).then((client) => {
+      module.exports.c = client;
+    });
+  }
+};
