@@ -90,10 +90,10 @@ function call(method, params) {
             (Array.isArray(bodyParsed.result.result) && bodyParsed.result.count > 0))) {
               resolve(bodyParsed.result.result);
             } else {
-              resolve({ error: true });
+              resolve({ error: 'No data found.' });
             }
           } catch (error) {
-            resolve({ error });
+            reject(error);
           }
         }
       });
