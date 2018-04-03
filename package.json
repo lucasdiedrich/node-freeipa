@@ -12,7 +12,10 @@
   "engines": {
     "node": ">=8.6.0"
   },
-  "files":["lib", "freeipa.js"],
+  "files": [
+    "lib",
+    "freeipa.js"
+  ],
   "scripts": {
     "lint": "./node_modules/.bin/eslint freeipa.js lib/**",
     "prepush": "npm run lint && npm run test:converage",
@@ -37,9 +40,7 @@
   "keywords": [
     "Freeipa IPA IDM API NodeJS"
   ],
-  "dependencies": {
-    "promise": "^7.3.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
