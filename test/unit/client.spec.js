@@ -1,4 +1,4 @@
-const ipa = require('../../freeipa');
+const ipa = require('../../src/freeipa');
 const sinon = require('sinon');
 
 const userFind = sinon.spy(ipa, 'user_find');

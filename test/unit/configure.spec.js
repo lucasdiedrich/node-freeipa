@@ -1,5 +1,5 @@
 
-const { configure } = require('../../freeipa');
+const { configure } = require('../../src/freeipa');
 
 describe('Configure Consumer', () => {
   beforeEach(() => {

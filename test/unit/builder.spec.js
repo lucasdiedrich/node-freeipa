@@ -1,6 +1,6 @@
-const ipa = require('../../freeipa');
+const ipa = require('../../src/freeipa');
 const sinon = require('sinon');
-const RequestBuilder = require('../../lib/RequestBuilder');
+const RequestBuilder = require('../../src/lib/RequestBuilder');
 
 const build = sinon.spy(RequestBuilder, 'build');
 

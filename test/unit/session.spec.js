@@ -1,6 +1,6 @@
 
-const Session = require('../../lib/Session');
-const ipa = require('../../freeipa');
+const Session = require('../../src/lib/Session');
+const ipa = require('../../src/freeipa');
 
 const fs = require('fs');
 const path = require('path');

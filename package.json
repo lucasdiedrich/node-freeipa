@@ -13,8 +13,7 @@
     "node": ">=8.6.0"
   },
   "files": [
-    "lib",
-    "freeipa.js"
+    "src"
   ],
   "scripts": {
     "lint": "./node_modules/.bin/eslint freeipa.js lib/**",
@@ -36,7 +35,7 @@
       "test/**"
     ]
   },
-  "main": "./freeipa.js",
+  "main": "./src/freeipa.js",
   "keywords": [
     "Freeipa IPA IDM API NodeJS"
   ],
