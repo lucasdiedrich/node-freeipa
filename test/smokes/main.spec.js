@@ -1,6 +1,5 @@
 
 const { configure, call } = require('../../freeipa');
-const Client = require('../../lib/Client');
 const Config = require('../../lib/Config');
 const RequestBuilder = require('../../lib/RequestBuilder');
 const Session = require('../../lib/Session');
@@ -11,9 +10,6 @@ describe('Smoke tests', () => {
   });
   it('call method - freeipa.js', () => {
     expect(call).to.exist;
-  });
-  it('Main method - lib/Client.js', () => {
-    expect(Client).to.exist;
   });
   it('Main method - lib/Config.js', () => {
     expect(Config).to.exist;

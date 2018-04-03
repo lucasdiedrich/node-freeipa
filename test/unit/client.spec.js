@@ -1,34 +1,29 @@
 const ipa = require('../../freeipa');
 
-describe('Dynamic client Consumer', () => {
-  const timeout = 25000;
+describe('consumer', () => {
+  // const timeout = 5000;
 
-  it('should the client be undefined', () => {
-    ipa.configure(global.fx.config);
-    expect(ipa.c).to.be.undefined;
+  it('should the new client be defined', () => {
+    expect(ipa.user_find).to.exist;
   });
 
-  it('should call user_find manually', (done) => {
+  it('should call user_find redirect to new client', () => {
+    expect(ipa.call).to.be.an.instanceof(Function);
+  });
+
+  it('should the client ipa.c be null', () => {
+    expect(ipa.c()).to.be.null;
+  });
+
+  it('should the client ipa.c to exist', () => {
     global.fx.config.configure_client = true;
     ipa.configure(global.fx.config);
+    expect(ipa.c).to.not.be.null;
+  });
 
-    ipa.call('user_find').then((result) => {
-      expect(result).to.exist;
-      done();
-    });
-  }).timeout(timeout + 1000);
-
-  it('should the client be defined', (done) => {
-    setTimeout(() => {
-      expect(ipa.c).to.exist;
-      done();
-    }, timeout);
-  }).timeout(timeout + 1000);
-
-  // it('should the client be defined', (done) => {
-  //   setTimeout(() => {
-  //     expect(ipa.c.user_find()).to.exist;
-  //     done();
-  //   }, timeout);
-  // }).timeout(timeout + 1000);
+  it('should the client ipa.c redirect to new client', () => {
+    global.fx.config.configure_client = true;
+    ipa.configure(global.fx.config);
+    expect(ipa.c.user_find).to.eql(ipa.user_find);
+  });
 });
