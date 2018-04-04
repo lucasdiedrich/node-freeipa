@@ -2,13 +2,15 @@ const https = require('https');
 
 const { _extend } = require('util');
 const qs = require('querystring');
-const Session = require('./Session');
+
+const SessionCl = require('./Session');
+
+const Session = new SessionCl();
 
 const URL_SESSION = '/ipa/session';
 const URL_LOGIN = '/login_password';
 const URL_JSON = '/json';
 
-let session = new Session();
 let Config;
 
 /**
@@ -46,7 +48,7 @@ function requestOpts(path, args) {
 
   if (path !== URL_LOGIN) {
     reqOpts.headers = _extend(reqOpts.headers, {
-      Cookie: session.token,
+      Cookie: Session.token,
       accept: 'application/json',
       'content-type': 'application/json',
     });
@@ -147,13 +149,13 @@ module.exports.build = function build(method, args, options) {
     throw new Error('node-freeipa: The module was not configured correctly');
   }
 
-  if (session.isValid()) {
+  if (Session.isValid()) {
     return getRequest(method, args, options);
   }
 
   return getSession().then((result) => {
-    session = new Session(result);
-    // console.log(session);
+    Session.setToken(result);
+
     return getRequest(method, args, options);
   });
 };

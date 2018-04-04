@@ -10,22 +10,18 @@ const CACHE_PATH = `${CACHE_FOLDER}/cookie.json`;
  * active token. If the token is not valid or will be expiring soon it should request a new one
  * as return everything as a promise.
  * @constructor
- * @param {string} _token - Acess token provided by Freeipa Server.
  */
-module.exports = function Main(_token = '') {
-  this.token = _token;
-
-  if (this.token) {
-    if (!fs.existsSync(CACHE_FOLDER)) {
-      fs.mkdirSync(CACHE_FOLDER);
+module.exports = class Session {
+  constructor() {
+    if (fs.existsSync(CACHE_PATH)) {
+      const cache = JSON.parse(fs.readFileSync(CACHE_PATH));
+      this.token = cache.token;
+    } else {
+      this.token = '';
     }
-    fs.writeFileSync(CACHE_PATH, JSON.stringify({ token: _token }));
-  } else if (fs.existsSync(CACHE_PATH)) {
-    const cache = JSON.parse(fs.readFileSync(CACHE_PATH));
-    this.token = cache.token;
   }
 
-  this.isValid = () => {
+  isValid() {
     if (!this.token || !fs.existsSync(CACHE_PATH)) {
       return false;
     }
@@ -45,7 +41,14 @@ module.exports = function Main(_token = '') {
     }
 
     return (expires >= current);
-  };
+  }
 
-  return this;
+  setToken(_token) {
+    this.token = _token;
+
+    if (!fs.existsSync(CACHE_FOLDER)) {
+      fs.mkdirSync(CACHE_FOLDER);
+    }
+    fs.writeFileSync(CACHE_PATH, JSON.stringify({ token: _token }));
+  }
 };
