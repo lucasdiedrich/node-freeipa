@@ -1,6 +1,6 @@
 {
   "name": "node-freeipa",
-  "version": "1.0.13",
+  "version": "2.0.0",
   "description": "A module to consume Freeipa Server API using promises.",
   "license": "MIT",
   "repository": "https://github.com/lucasdiedrich/node-freeipa",
@@ -12,7 +12,9 @@
   "engines": {
     "node": ">=8.6.0"
   },
-  "files":["lib", "freeipa.js"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "lint": "./node_modules/.bin/eslint freeipa.js lib/**",
     "prepush": "npm run lint && npm run test:converage",
@@ -33,13 +35,11 @@
       "test/**"
     ]
   },
-  "main": "./freeipa.js",
+  "main": "./src/freeipa.js",
   "keywords": [
     "Freeipa IPA IDM API NodeJS"
   ],
-  "dependencies": {
-    "promise": "^7.3.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",

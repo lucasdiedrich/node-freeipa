@@ -5,3 +5,6 @@ ca.crt
 .nyc_output
 coverage
 cache
+
+.tmp
+.vscode

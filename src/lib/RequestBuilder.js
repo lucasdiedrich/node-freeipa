@@ -1,14 +1,16 @@
 const https = require('https');
-const Promise = require('promise');
+
 const { _extend } = require('util');
 const qs = require('querystring');
-const Session = require('./Session');
+
+const SessionCl = require('./Session');
+
+const Session = new SessionCl();
 
 const URL_SESSION = '/ipa/session';
 const URL_LOGIN = '/login_password';
 const URL_JSON = '/json';
 
-let session = new Session();
 let Config;
 
 /**
@@ -17,10 +19,6 @@ let Config;
  * @param {json} args - Freeipa params to send.
  */
 function requestOpts(path, args) {
-  if (!args) {
-    throw new Error('Freeipa: Blank args not possible for this type of request.');
-  }
-
   let data = null;
   const myArgs = args;
 
@@ -50,7 +48,7 @@ function requestOpts(path, args) {
 
   if (path !== URL_LOGIN) {
     reqOpts.headers = _extend(reqOpts.headers, {
-      Cookie: session.token,
+      Cookie: Session.token,
       accept: 'application/json',
       'content-type': 'application/json',
     });
@@ -67,6 +65,10 @@ function requestOpts(path, args) {
  */
 function call(method, params) {
   return new Promise((resolve, reject) => {
+    if (!params) {
+      reject(new Error('Freeipa: Blank args not possible for this type of request.'));
+    }
+
     const opts = requestOpts(method, params);
 
     const req = https.request(opts.reqOpts, (res) => {
@@ -77,7 +79,7 @@ function call(method, params) {
           if (res.headers['set-cookie']) {
             resolve(res.headers['set-cookie'][0]);
           } else {
-            throw new Error("It wasn't possible to get the auth cookie, check your configs.");
+            reject(new Error('It wasn\'t possible to get the auth cookie, check your configs.'));
           }
         } else {
           try {
@@ -90,10 +92,10 @@ function call(method, params) {
             (Array.isArray(bodyParsed.result.result) && bodyParsed.result.count > 0))) {
               resolve(bodyParsed.result.result);
             } else {
-              resolve({ error: true });
+              resolve({ error: 'No data found.' });
             }
           } catch (error) {
-            resolve({ error });
+            reject(error);
           }
         }
       });
@@ -143,12 +145,17 @@ function getRequest(method, args, options) {
 module.exports.build = function build(method, args, options) {
   ({ Config } = global);
 
-  if (session.isValid()) {
+  if (!Config) {
+    throw new Error('node-freeipa: The module was not configured correctly');
+  }
+
+  if (Session.isValid()) {
     return getRequest(method, args, options);
   }
 
   return getSession().then((result) => {
-    session = new Session(result);
+    Session.setToken(result);
+
     return getRequest(method, args, options);
   });
 };
