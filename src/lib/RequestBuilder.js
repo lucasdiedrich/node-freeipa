@@ -17,10 +17,6 @@ let Config;
  * @param {json} args - Freeipa params to send.
  */
 function requestOpts(path, args) {
-  if (!args) {
-    throw new Error('Freeipa: Blank args not possible for this type of request.');
-  }
-
   let data = null;
   const myArgs = args;
 
@@ -67,6 +63,10 @@ function requestOpts(path, args) {
  */
 function call(method, params) {
   return new Promise((resolve, reject) => {
+    if (!params) {
+      reject(new Error('Freeipa: Blank args not possible for this type of request.'));
+    }
+
     const opts = requestOpts(method, params);
 
     const req = https.request(opts.reqOpts, (res) => {
@@ -77,7 +77,7 @@ function call(method, params) {
           if (res.headers['set-cookie']) {
             resolve(res.headers['set-cookie'][0]);
           } else {
-            throw new Error("It wasn't possible to get the auth cookie, check your configs.");
+            reject(new Error('It wasn\'t possible to get the auth cookie, check your configs.'));
           }
         } else {
           try {
