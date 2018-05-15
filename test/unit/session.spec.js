@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const CACHE_FOLDER = path.join(__dirname, '../../', '.tmp');
-const CACHE_PATH = `${CACHE_FOLDER}/cookie.json`;
+const CACHE_PATH = `${CACHE_FOLDER}/freeipa.cookie.json`;
 
 const SessionCl = require('../../src/lib/Session');
 

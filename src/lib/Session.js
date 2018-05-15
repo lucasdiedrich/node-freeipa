@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const CACHE_FOLDER = path.join(__dirname, '../../', '.tmp');
-const CACHE_PATH = `${CACHE_FOLDER}/cookie.json`;
+const CACHE_PATH = `${CACHE_FOLDER}/freeipa.cookie.json`;
 
 /**
  * This class handle the credentials of the freeipa request, also verifies if the app has an
