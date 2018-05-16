@@ -17,7 +17,8 @@ const options = {
   krb: false,
   rejectUnauthorized: true,
   client_version: '2.156',
-  expires: 1440,
+  expires: 1439,
+  configure_client: false,
 };
 
 /**

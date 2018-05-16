@@ -1,4 +1,3 @@
-const https = require('https');
 
 const { _extend } = require('util');
 const qs = require('querystring');
@@ -6,6 +5,7 @@ const qs = require('querystring');
 const SessionCl = require('./Session');
 
 const Session = new SessionCl();
+const Request = require('./Request');
 
 const URL_SESSION = '/ipa/session';
 const URL_LOGIN = '/login_password';
@@ -48,7 +48,7 @@ function requestOpts(path, args) {
 
   if (path !== URL_LOGIN) {
     reqOpts.headers = _extend(reqOpts.headers, {
-      Cookie: Session.token,
+      Cookie: Session.getToken(),
       accept: 'application/json',
       'content-type': 'application/json',
     });
@@ -64,61 +64,30 @@ function requestOpts(path, args) {
  * @param {json} params - Freeipa params to send.
  */
 function call(method, params) {
-  return new Promise((resolve, reject) => {
-    if (!params) {
-      reject(new Error('Freeipa: Blank args not possible for this type of request.'));
-    }
+  const opts = requestOpts(method, params);
 
-    const opts = requestOpts(method, params);
+  if (!method || !params || !opts) {
+    return Promise.reject(new Error('Freeipa: Blank args not possible for this type of request.'));
+  }
 
-    const req = https.request(opts.reqOpts, (res) => {
-      let body = '';
-      res.on('data', (chunk) => { body += chunk; });
-      res.on('end', () => {
-        if (method === URL_LOGIN) {
-          if (res.headers['set-cookie']) {
-            resolve(res.headers['set-cookie'][0]);
-          } else {
-            reject(new Error('It wasn\'t possible to get the auth cookie, check your configs.'));
-          }
-        } else {
-          try {
-            const bodyParsed = JSON.parse(body);
-
-            if ((!bodyParsed.error) &&
-            bodyParsed.result &&
-            bodyParsed.result.result &&
-            (!Array.isArray(bodyParsed.result.result) ||
-            (Array.isArray(bodyParsed.result.result) && bodyParsed.result.count > 0))) {
-              resolve(bodyParsed.result.result);
-            } else {
-              resolve({ error: 'No data found.' });
-            }
-          } catch (error) {
-            reject(error);
-          }
-        }
-      });
-    });
-
-    req.on('error', (e) => {
-      reject(new Error(`Freeipa: problem with request: ${e.message}`));
-    });
-
-    if (opts.data) {
-      req.write(opts.data);
-    }
-
-    req.end();
-  });
+  return new Request(method, params, opts);
 }
 
 /**
  * Gets a new session token to make some new requests.
  */
 function getSession() {
-  const loginArgs = { user: Config.auth.user, password: Config.auth.pass };
+  ({ Config } = global);
 
+  if (!Config) {
+    return Promise.reject(new Error('node-freeipa: The module was not configured correctly'));
+  }
+
+  if (Session.isValid()) {
+    return Promise.resolve('cache');
+  }
+
+  const loginArgs = { user: Config.auth.user, password: Config.auth.pass };
   return call(URL_LOGIN, loginArgs);
 }
 
@@ -143,18 +112,8 @@ function getRequest(method, args, options) {
  * @param {array} options - Freeipa options to send.
  */
 module.exports.build = function build(method, args, options) {
-  ({ Config } = global);
-
-  if (!Config) {
-    throw new Error('node-freeipa: The module was not configured correctly');
-  }
-
-  if (Session.isValid()) {
-    return getRequest(method, args, options);
-  }
-
   return getSession().then((result) => {
-    Session.setToken(result);
+    if (result !== 'cache') { Session.setToken(result); }
 
     return getRequest(method, args, options);
   });

@@ -20,31 +20,30 @@ let Session = null;
 describe('Session Token tests', () => {
   beforeEach(() => {
     Session = null;
-    try {
-      fs.unlinkSync(CACHE_PATH);
-      fs.rmdirSync(CACHE_FOLDER);
-      ipa.configure(global.fx.config);
-    } catch (error) { }
+    if (fs.existsSync(CACHE_PATH)) { fs.unlinkSync(CACHE_PATH); }
+    if (fs.existsSync(CACHE_FOLDER)) { fs.rmdirSync(CACHE_FOLDER); }
+    ipa.configure(global.fx.config);
   });
 
   it('should be empty and invalid', () => {
     Session = new SessionCl();
 
-    expect(Session.token).to.be.empty;
+    expect(Session.tokens).to.be.empty;
     expect(Session.isValid()).to.be.false;
   });
 
   it('should have token not empty', () => {
     Session = new SessionCl();
     Session.setToken(FAKE_TOKEN);
-    expect(Session.token).to.not.be.empty;
+    expect(Session.tokens).to.not.be.empty;
   });
 
-  it('should use 4.4 prior validation - invalid', () => {
-    Session = new SessionCl();
-    Session.setToken(FAKE_TOKEN);
-    expect(Session.isValid()).to.be.false;
-  });
+  // As we don't use expires anymore this is obsolete
+  // it('should use 4.4 prior validation - invalid', () => {
+  //   Session = new SessionCl();
+  //   Session.setToken(FAKE_TOKEN);
+  //   expect(Session.isValid()).to.be.false;
+  // });
 
   it('should use 4.4 prior validation - valid', () => {
     Session = new SessionCl(FUTURE_FAKE_TOKEN);
@@ -71,6 +70,7 @@ describe('Session Token tests', () => {
     Session = new SessionCl();
     Session.setToken(FAKE_TOKEN);
     Session2 = new SessionCl();
-    expect(Session2.token).to.not.be.empty;
+
+    expect(Session2.tokens).to.not.be.empty;
   });
 });

@@ -13,42 +13,66 @@ const CACHE_PATH = `${CACHE_FOLDER}/freeipa.cookie.json`;
  */
 module.exports = class Session {
   constructor() {
-    if (fs.existsSync(CACHE_PATH)) {
-      const cache = JSON.parse(fs.readFileSync(CACHE_PATH));
-      this.token = cache.token;
-    } else {
-      this.token = '';
-    }
+    this.tokens = {};
+    this.loadFromFile();
   }
 
   isValid() {
-    if (!this.token || !fs.existsSync(CACHE_PATH)) {
-      return false;
-    }
+    const tuple = this.getTuple();
+    if (!tuple) { return false; }
 
-    let expires = new Date();
+    const expires = new Date(tuple.expires);
     const current = new Date();
-    const expired = this.token.split(';')[3];
 
-    if (expired.split('=')[1]) {
-      expires.setTime(expired.split('=')[1]);
-    } else {
-      // Freeipa 4.5+
-      const stats = fs.statSync(CACHE_PATH).mtime;
-      expires = new Date(stats);
-
-      expires.setMinutes(expires.getMinutes() + global.Config.expires);
-    }
-
-    return (expires >= current);
+    return (expires > current);
   }
 
-  setToken(_token) {
-    this.token = _token;
+  getToken(login = 'default') {
+    return this.tokens[login].token;
+  }
 
+  setToken(_token, login = 'default') {
+    this.addToken(login, _token);
+  }
+
+  getTuple(login = 'default') {
+    return this.tokens[login] || false;
+  }
+
+  addToken(login = 'default', token) {
+    const id = login;
+    const expires = new Date();
+    expires.setMinutes(expires.getMinutes() + global.Config.expires);
+
+    this.tokens[id] = {
+      token,
+      expires,
+    };
+
+    this.exportToFile();
+  }
+
+  remToken(login) {
+    const id = login;
+
+    if (this.tokens && this.tokens[id]) {
+      delete this.tokens[id];
+
+      this.exportToFile();
+    }
+  }
+
+  exportToFile() {
     if (!fs.existsSync(CACHE_FOLDER)) {
       fs.mkdirSync(CACHE_FOLDER);
     }
-    fs.writeFileSync(CACHE_PATH, JSON.stringify({ token: _token }));
+    fs.writeFileSync(CACHE_PATH, JSON.stringify(this.tokens));
+  }
+
+  loadFromFile() {
+    if (fs.existsSync(CACHE_PATH)) {
+      const cache = JSON.parse(fs.readFileSync(CACHE_PATH));
+      this.tokens = cache;
+    }
   }
 };
