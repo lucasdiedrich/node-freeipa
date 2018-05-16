@@ -18,7 +18,6 @@ const options = {
   rejectUnauthorized: true,
   client_version: '2.156',
   expires: 1439,
-  configure_client: false,
 };
 
 /**

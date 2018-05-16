@@ -32,10 +32,6 @@ class ExtendableProxy {
 }
 
 class Main {
-  constructor() {
-    this.c = () => null;
-  }
-
   /**
    * Init config class, rebuild client class with new methods;
    * @method
@@ -44,11 +40,7 @@ class Main {
   configure(_options) {
     Config.init(_options);
 
-    if (global.Config.configure_client) {
-      console.log('!!! NODE-FREEIPA: This method is DEPRECATED, check manual to see new usage... !!!');
-      console.log('!!! NODE-FREEIPA: Redirecting... !!!');
-      this.c = this;
-    }
+    return this;
   }
 
   /**
