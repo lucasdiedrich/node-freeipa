@@ -28,7 +28,9 @@ module.exports = class Session {
   }
 
   getToken(login = 'default') {
-    return this.tokens[login].token;
+    const id = Buffer.from(login).toString('base64');
+
+    return this.tokens[id].token;
   }
 
   setToken(_token, login = 'default') {
@@ -36,11 +38,14 @@ module.exports = class Session {
   }
 
   getTuple(login = 'default') {
-    return this.tokens[login] || false;
+    const id = Buffer.from(login).toString('base64');
+
+    return this.tokens[id] || false;
   }
 
-  addToken(login = 'default', token) {
-    const id = login;
+  addToken(login, token) {
+    const id = Buffer.from(login).toString('base64');
+
     const expires = new Date();
     expires.setMinutes(expires.getMinutes() + global.Config.expires);
 
@@ -53,7 +58,7 @@ module.exports = class Session {
   }
 
   remToken(login) {
-    const id = login;
+    const id = Buffer.from(login).toString('base64');
 
     if (this.tokens && this.tokens[id]) {
       delete this.tokens[id];
