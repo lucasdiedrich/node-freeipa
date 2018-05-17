@@ -19,24 +19,15 @@ module.exports = class Session {
     this.loadFromFile();
   }
 
-  isValid() {
-    const tuple = this.getTuple();
+  isValid(login) {
+    const tuple = this.getTuple(login);
+
     if (!tuple) { return false; }
 
     const expires = new Date(tuple.expires);
     const current = new Date();
 
     return (expires > current);
-  }
-
-  getToken(login = 'default') {
-    const id = Buffer.from(login).toString('base64');
-
-    return this.tokens[id].token;
-  }
-
-  setToken(_token, login = 'default') {
-    this.addToken(login, _token);
   }
 
   getTuple(login = 'default') {
@@ -60,9 +51,8 @@ module.exports = class Session {
   }
 
   remToken(login) {
-    const id = Buffer.from(login).toString('base64');
-
-    if (this.tokens && this.tokens[id]) {
+    if (this.tokens[id]) {
+      const id = Buffer.from(login).toString('base64');
       delete this.tokens[id];
 
       this.exportToFile();

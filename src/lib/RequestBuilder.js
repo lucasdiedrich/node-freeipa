@@ -27,7 +27,7 @@ module.exports = class RequestBuilder {
     this.session = new Session(this.config.expires);
 
     return this.getSession().then((result) => {
-      if (result !== 'cache') { this.session.setToken(result); }
+      if (result !== 'cache') { this.session.addToken(this.config.auth.user, result); }
 
       return this.getRequest();
     });
@@ -52,7 +52,7 @@ module.exports = class RequestBuilder {
    * Gets a new session token to make some new requests.
    */
   getSession() {
-    if (this.session.isValid()) {
+    if (this.session.isValid(this.config.auth.user)) {
       return Promise.resolve('cache');
     }
     // No session, changing endpoint for login.
