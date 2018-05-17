@@ -6,7 +6,7 @@ const AUTH_KRB = 'kerberos';
 /**
  * Default options
  */
-const options = {
+const OPTIONS = {
   auth_method: AUTH_PASS,
   server: 'domain-not-changed',
   auth: {
@@ -26,18 +26,18 @@ const options = {
  * @constructor
  * @param {json} _options - Custom options that should be filled.
  */
-module.exports.init = function init(_options) {
-  const myOptions = _extend(options, _options);
+module.exports = class Config {
+  constructor(_options) {
+    this.options = _extend(OPTIONS, _options);
 
-  if (!myOptions.ca) {
-    myOptions.rejectUnauthorized = false;
+    if (!this.options.ca) {
+      this.options.rejectUnauthorized = false;
+    }
+
+    if (this.options.krb) {
+      this.options.auth_method = AUTH_KRB;
+    }
+
+    return this.options;
   }
-
-  if (myOptions.krb) {
-    myOptions.auth_method = AUTH_KRB;
-  }
-
-  global.Config = myOptions;
-
-  return myOptions;
 };

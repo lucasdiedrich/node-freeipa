@@ -12,8 +12,10 @@ const CACHE_PATH = `${CACHE_FOLDER}/freeipa.cookie.json`;
  * @constructor
  */
 module.exports = class Session {
-  constructor() {
+  constructor(expires) {
     this.tokens = {};
+    this.defaultExpires = expires;
+
     this.loadFromFile();
   }
 
@@ -47,7 +49,7 @@ module.exports = class Session {
     const id = Buffer.from(login).toString('base64');
 
     const expires = new Date();
-    expires.setMinutes(expires.getMinutes() + global.Config.expires);
+    expires.setMinutes(expires.getMinutes() + this.defaultExpires);
 
     this.tokens[id] = {
       token,
