@@ -2,6 +2,7 @@
 const { configure, call } = require('../../src/freeipa');
 const Config = require('../../src/lib/Config');
 const RequestBuilder = require('../../src/lib/RequestBuilder');
+const Request = require('../../src/lib/Request');
 const Session = require('../../src/lib/Session');
 
 describe('Smoke tests', () => {
@@ -19,5 +20,8 @@ describe('Smoke tests', () => {
   });
   it('Main method - lib/Session.js', () => {
     expect(Session).to.exist;
+  });
+  it('Main method - lib/Request.js', () => {
+    expect(Request).to.exist;
   });
 });

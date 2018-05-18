@@ -7,7 +7,7 @@ const path = require('path');
 const CACHE_FOLDER = path.join(__dirname, '../../', '.tmp');
 const CACHE_PATH = `${CACHE_FOLDER}/freeipa.cookie.json`;
 
-const SessionCl = require('../../src/lib/Session');
+const Session = require('../../src/lib/Session');
 
 const FAKE_DATE = new Date().getTime();
 const FAKE_TOKEN = `ipa_session=MagBearerToken=ve9ft7if3SCZm6kJM%2bVzytBkEDR61TDitzc4W90PPe%2bhaGNl%2fw5UMwEdCiaxCz54E56N0Y9nDvt2FmTDMyXGmwmdPgyr7gvIh0i8ewKsoQkYE8T%2bR0Si63bS5z1UZ0fzKBtasWtsXbUd2m3hG%2fM4Fs29LM%2bzL7wyzRlk8wl9ca8Anvj5Dwe8N3cJXNK77kBs7OZc7fja5BDN7PlKRGmU%2fg%3d%3d;path=/ipa;httponly;expires=${FAKE_DATE};secure;`;
@@ -15,62 +15,107 @@ const FAKE_TOKEN45 = 'ipa_session=MagBearerToken=ve9ft7if3SCZm6kJM%2bVzytBkEDR61
 const FUTURE_FAKE_DATE = new Date((new Date()).getTime() + (10 * 86400000)).getTime();
 const FUTURE_FAKE_TOKEN = `ipa_session=MagBearerToken=ve9ft7if3SCZm6kJM%2bVzytBkEDR61TDitzc4W90PPe%2bhaGNl%2fw5UMwEdCiaxCz54E56N0Y9nDvt2FmTDMyXGmwmdPgyr7gvIh0i8ewKsoQkYE8T%2bR0Si63bS5z1UZ0fzKBtasWtsXbUd2m3hG%2fM4Fs29LM%2bzL7wyzRlk8wl9ca8Anvj5Dwe8N3cJXNK77kBs7OZc7fja5BDN7PlKRGmU%2fg%3d%3d;path=/ipa;httponly;expires=${FUTURE_FAKE_DATE};secure;`;
 
-let Session = null;
+const EXPIRES = 1440;
 
 describe('Session Token tests', () => {
   beforeEach(() => {
-    Session = null;
     if (fs.existsSync(CACHE_PATH)) { fs.unlinkSync(CACHE_PATH); }
     if (fs.existsSync(CACHE_FOLDER)) { fs.rmdirSync(CACHE_FOLDER); }
     ipa.configure(global.fx.config);
   });
 
   it('should be empty and invalid', () => {
-    Session = new SessionCl();
+    const session = new Session(EXPIRES);
 
-    expect(Session.tokens).to.be.empty;
-    expect(Session.isValid()).to.be.false;
+    expect(session.tokens).to.be.empty;
+    expect(session.isValid('default')).to.be.false;
   });
 
   it('should have token not empty', () => {
-    Session = new SessionCl();
-    Session.setToken(FAKE_TOKEN);
-    expect(Session.tokens).to.not.be.empty;
+    const session = new Session(EXPIRES);
+    session.addToken('default', FAKE_TOKEN);
+    expect(session.tokens).to.not.be.empty;
   });
 
   // As we don't use expires anymore this is obsolete
   // it('should use 4.4 prior validation - invalid', () => {
-  //   Session = new SessionCl();
-  //   Session.setToken(FAKE_TOKEN);
+  //   Session = new Session();
+  //   Session.addToken('default', FAKE_TOKEN);
   //   expect(Session.isValid()).to.be.false;
   // });
 
   it('should use 4.4 prior validation - valid', () => {
-    Session = new SessionCl(FUTURE_FAKE_TOKEN);
-    Session.setToken(FUTURE_FAKE_TOKEN);
+    const session = new Session(EXPIRES);
+    session.addToken('default', FUTURE_FAKE_TOKEN);
 
-    expect(Session.isValid()).to.be.true;
+    expect(session.isValid('default')).to.be.true;
   });
 
   it('should use 4.5 validation - valid', () => {
-    Session = new SessionCl();
-    Session.setToken(FAKE_TOKEN45);
-    expect(Session.isValid()).to.be.true;
+    const session = new Session(EXPIRES);
+    session.addToken('default', FAKE_TOKEN45);
+    expect(session.isValid('default')).to.be.true;
   });
 
   it('should create cache', () => {
     expect(fs.existsSync(CACHE_FOLDER)).to.be.false;
-    Session = new SessionCl(FAKE_TOKEN);
-    Session.setToken(FAKE_TOKEN);
+    const session = new Session(FAKE_TOKEN);
+    session.addToken('default', FAKE_TOKEN);
     expect(fs.existsSync(CACHE_FOLDER)).to.be.true;
     expect(fs.existsSync(CACHE_PATH)).to.be.true;
   });
 
   it('should use cache token', () => {
-    Session = new SessionCl();
-    Session.setToken(FAKE_TOKEN);
-    Session2 = new SessionCl();
+    const session = new Session(EXPIRES);
+    session.addToken('default', FAKE_TOKEN);
+    session2 = new Session(EXPIRES);
 
-    expect(Session2.tokens).to.not.be.empty;
+    expect(session2.tokens).to.not.be.empty;
+  });
+
+  it('should have more than one token', () => {
+    const session = new Session(EXPIRES);
+    session.addToken('default', FAKE_TOKEN);
+    session.addToken('default2', FAKE_TOKEN);
+    session.addToken('default3', FAKE_TOKEN);
+
+    expect(Object.keys(session.tokens).length).to.be.above(2);
+  });
+
+  it('should remove one cached token', () => {
+    const session = new Session(EXPIRES);
+    session.addToken('default', FAKE_TOKEN);
+    session.addToken('default2', FAKE_TOKEN);
+
+    session.remToken('default2');
+    expect(Object.keys(session.tokens).length).to.be.eql(1);
+  });
+
+  it('user token should be unique', () => {
+    const session = new Session(EXPIRES);
+    session.addToken('default', FAKE_TOKEN);
+    session.addToken('default', FAKE_TOKEN);
+
+    expect(Object.keys(session.tokens).length).to.be.eql(1);
+  });
+
+  it('should remove token that does not exit', () => {
+    const session = new Session(EXPIRES);
+    session.remToken('default', FAKE_TOKEN);
+
+    expect(Object.keys(session.tokens).length).to.be.eql(0);
+  });
+
+  it('should get a tuple', () => {
+    const session = new Session(EXPIRES);
+    session.addToken('default', FAKE_TOKEN);
+    const r = session.getTuple('default');
+    expect(r).to.exist;
+  });
+  it('should get a tuple but returns false', () => {
+    const session = new Session(EXPIRES);
+    const r = session.getTuple('default');
+
+    expect(r).to.be.false;
   });
 });

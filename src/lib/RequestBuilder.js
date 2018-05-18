@@ -19,11 +19,14 @@ module.exports = class RequestBuilder {
    * @param {array} options - Freeipa options to send.
    */
   constructor(method, args, options, config) {
+    if (!method || !args || !options || !config) {
+      return Promise.reject(new Error('Freeipa: Blank args not possible for this type of request.'));
+    }
+
     this.method = method;
     this.args = args;
     this.options = options;
     this.config = config;
-    this.endpoint = URL_JSON;
     this.session = new Session(this.config.expires);
 
     return this.getSession().then((result) => {
@@ -38,12 +41,8 @@ module.exports = class RequestBuilder {
    * This is for internal use only, should not be used by other modules.
    * @param {json} params - Freeipa params to send.
    */
-  call(params) {
-    const opts = this.getOpts(this.endpoint, params);
-
-    if (!opts) {
-      return Promise.reject(new Error('Freeipa: Blank args not possible for this type of request.'));
-    }
+  call(endpoint, params) {
+    const opts = this.getOpts(endpoint, params);
 
     return new Request(opts);
   }
@@ -55,11 +54,9 @@ module.exports = class RequestBuilder {
     if (this.session.isValid(this.config.auth.user)) {
       return Promise.resolve('cache');
     }
-    // No session, changing endpoint for login.
-    this.endpoint = URL_LOGIN;
     const loginArgs = { user: this.config.auth.user, password: this.config.auth.pass };
 
-    return this.call(loginArgs);
+    return this.call(URL_LOGIN, loginArgs);
   }
 
 
@@ -73,7 +70,7 @@ module.exports = class RequestBuilder {
     const { method } = this;
     const defaultArgs = { method, params: [this.args, this.options] };
 
-    return this.call(defaultArgs);
+    return this.call(URL_JSON, defaultArgs);
   }
 
   /**
@@ -111,7 +108,7 @@ module.exports = class RequestBuilder {
 
     if (path !== URL_LOGIN) {
       reqOpts.headers = _extend(reqOpts.headers, {
-        Cookie: this.session.getToken(),
+        Cookie: this.session.getTuple(this.config.auth.user).token,
         accept: 'application/json',
         'content-type': 'application/json',
       });

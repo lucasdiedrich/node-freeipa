@@ -30,7 +30,7 @@ module.exports = class Session {
     return (expires > current);
   }
 
-  getTuple(login = 'default') {
+  getTuple(login) {
     const id = Buffer.from(login).toString('base64');
 
     return this.tokens[id] || false;
@@ -38,6 +38,10 @@ module.exports = class Session {
 
   addToken(login, token) {
     const id = Buffer.from(login).toString('base64');
+
+    if (this.tokens[id]) {
+      this.remToken(login);
+    }
 
     const expires = new Date();
     expires.setMinutes(expires.getMinutes() + this.defaultExpires);
@@ -51,8 +55,8 @@ module.exports = class Session {
   }
 
   remToken(login) {
+    const id = Buffer.from(login).toString('base64');
     if (this.tokens[id]) {
-      const id = Buffer.from(login).toString('base64');
       delete this.tokens[id];
 
       this.exportToFile();

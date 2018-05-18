@@ -11,7 +11,6 @@ module.exports = class Request {
    */
   constructor(opts) {
     this.opts = opts;
-
     return new Promise((resolve, reject) => {
       const req = this.getRequest(resolve, reject);
 
@@ -49,15 +48,8 @@ module.exports = class Request {
           } else {
             const bodyParsed = JSON.parse(body);
 
-            if (bodyParsed.error) {
+            if (bodyParsed.error || !bodyParsed.result) {
               resolve({ error: bodyParsed.error });
-            }
-
-            if (!bodyParsed.result) {
-              resolve({
-                error: bodyParsed.error,
-                detail: bodyParsed.result,
-              });
             }
 
             if (bodyParsed.result.result &&
@@ -65,7 +57,7 @@ module.exports = class Request {
             (Array.isArray(bodyParsed.result.result) && bodyParsed.result.count > 0))) {
               resolve(bodyParsed.result.result);
             } else {
-              resolve({ error: 'No data found.', detail: bodyParsed.result.result });
+              resolve({ error: 'No data found.', detail: bodyParsed.result });
             }
           }
         } catch (e) {
