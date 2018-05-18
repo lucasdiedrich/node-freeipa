@@ -5,13 +5,12 @@ const path = require('path');
 const CACHE_FOLDER = path.join(__dirname, '../../', '.tmp');
 const CACHE_PATH = `${CACHE_FOLDER}/freeipa.cookie.json`;
 
-/**
- * This class handle the credentials of the freeipa request, also verifies if the app has an
- * active token. If the token is not valid or will be expiring soon it should request a new one
- * as return everything as a promise.
- * @constructor
- */
 module.exports = class Session {
+  /**
+   * Construct one new Session
+   * @constructor
+   * @param {integer} expires - The time in minutes of the expired cookie.
+   */
   constructor(expires) {
     this.tokens = {};
     this.defaultExpires = expires;
@@ -19,6 +18,11 @@ module.exports = class Session {
     this.loadFromFile();
   }
 
+  /**
+   * Return true if the user login has an valid cookie inside the store.
+   * @method
+   * @param {string} login - The user plain login.
+   */
   isValid(login) {
     const tuple = this.getTuple(login);
 
@@ -30,12 +34,23 @@ module.exports = class Session {
     return (expires > current);
   }
 
+  /**
+   * Return the user cookie if it have one or false if doesn't.
+   * @method
+   * @param {string} login - The user plain login.
+   */
   getTuple(login) {
     const id = Buffer.from(login).toString('base64');
 
     return this.tokens[id] || false;
   }
 
+  /**
+   * Add an token to the store.
+   * @method
+   * @param {string} login - The user plain login.
+   * @param {string} token - The plain token returned from freeipa server.
+   */
   addToken(login, token) {
     const id = Buffer.from(login).toString('base64');
 
@@ -54,6 +69,11 @@ module.exports = class Session {
     this.exportToFile();
   }
 
+  /**
+   * Remove an token from the store.
+   * @method
+   * @param {string} login - The user plain login.
+   */
   remToken(login) {
     const id = Buffer.from(login).toString('base64');
     if (this.tokens[id]) {
@@ -63,6 +83,10 @@ module.exports = class Session {
     }
   }
 
+  /**
+   * Export the current json object to the file store.
+   * @method
+   */
   exportToFile() {
     if (!fs.existsSync(CACHE_FOLDER)) {
       fs.mkdirSync(CACHE_FOLDER);
@@ -70,6 +94,10 @@ module.exports = class Session {
     fs.writeFileSync(CACHE_PATH, JSON.stringify(this.tokens));
   }
 
+  /**
+   * Import the current json object to the file store.
+   * @method
+   */
   loadFromFile() {
     if (fs.existsSync(CACHE_PATH)) {
       const cache = JSON.parse(fs.readFileSync(CACHE_PATH));
