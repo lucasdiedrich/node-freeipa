@@ -76,7 +76,7 @@ The method you wan't to call, ex: user_find.
 
 Type: `Array`
 
-Array of arguments you wan't to use, default: [""].
+Array of arguments you wan't to use, default: [].
 
 #### {options}
 
@@ -88,7 +88,20 @@ Json object containing options for the request, default: {}.
 ipa.user_find().then(result => { });
 //same as
 ipa.user_find([""],{}).then(result => { });
+// searching by an user with login
+ipa.user_find([""],{login: 'mylogin'}).then(result => { });
+// searching by criteria only
+ipa.user_find(['mylogin']).then(result => { });
+// searching by criteria only and option
+ipa.user_find(['mylogin'], {mail: 'mylogin@domain.com'}).then(result => { });
 ```
+
+### Freeipa API usage:
+
+Below are some helpers on how to use Freeipa API:
+
+[Talking to Freeipa](https://vda.li/en/posts/2015/05/28/talking-to-freeipa-api-with-sessions/)
+[Freeipa API_Examples](https://www.freeipa.org/page/API_Examples)
 
 ## License
 
