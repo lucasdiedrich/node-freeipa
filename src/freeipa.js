@@ -9,7 +9,7 @@ const Build = require('./lib/RequestBuilder');
    */
 class GenericFunction {
   constructor(method, main) {
-    return (args = [''], opts = {}) => new Build(method, args, opts, main.config);
+    return (args = [], opts = {}) => new Build(method, args, opts, main.config);
   }
 }
 

@@ -39,4 +39,10 @@ describe('Request Builder Tests', () => {
       });
     });
   }).timeout(6000);
+
+  it('empty args should work', (done) => {
+    ipa.whoami().then(() => {
+      done();
+    });
+  }).timeout(6000);
 });
