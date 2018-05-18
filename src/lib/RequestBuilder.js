@@ -1,161 +1,119 @@
-const https = require('https');
 
 const { _extend } = require('util');
 const qs = require('querystring');
 
-const SessionCl = require('./Session');
-
-const Session = new SessionCl();
+const Session = require('./Session');
+const Request = require('./Request');
 
 const URL_SESSION = '/ipa/session';
 const URL_LOGIN = '/login_password';
 const URL_JSON = '/json';
 
-let Config;
-
-/**
- * Builds one new request options based on its path.
- * @param {string} path - The method that it should call, for example, user_find.
- * @param {json} args - Freeipa params to send.
- */
-function requestOpts(path, args) {
-  let data = null;
-  const myArgs = args;
-
-  // LOGIN_AUTH has a different behavior.
-  if (path === URL_LOGIN) {
-    data = qs.stringify(args);
-  } else {
-    myArgs.params[1] = _extend(myArgs.params[1], {
-      version: Config.client_version,
-    });
-    data = JSON.stringify(myArgs);
-  }
-
-  const reqOpts = {
-    method: 'POST',
-    host: Config.server,
-    path: URL_SESSION + path,
-    ca: Config.ca,
-    headers: {
-      accept: 'text/plain',
-      'content-type': 'application/x-www-form-urlencoded',
-      referer: `https://${Config.server}/ipa`,
-      'Content-Length': data.length,
-    },
-    rejectUnauthorized: Config.rejectUnauthorized,
-  };
-
-  if (path !== URL_LOGIN) {
-    reqOpts.headers = _extend(reqOpts.headers, {
-      Cookie: Session.token,
-      accept: 'application/json',
-      'content-type': 'application/json',
-    });
-  }
-
-  return { reqOpts, data };
-}
-
-/**
- * This make HTTP/HTTPS request and return a promise without using 3rd party libs.
- * This is for internal use only, should not be used by other modules.
- * @param {string} method - The method that it should call, for example, user_find.
- * @param {json} params - Freeipa params to send.
- */
-function call(method, params) {
-  return new Promise((resolve, reject) => {
-    if (!params) {
-      reject(new Error('Freeipa: Blank args not possible for this type of request.'));
+module.exports = class RequestBuilder {
+  /**
+   * This class handle the requests based on method,args,options.
+   * Also returns all request using promises.
+   * @constructor
+   * @param {string} method - The method that it should call, for example, user_find.
+   * @param {array} args - Freeipa argument to send.
+   * @param {array} options - Freeipa options to send.
+   */
+  constructor(method, args, options, config) {
+    if (!method || !args || !options || !config) {
+      return Promise.reject(new Error('Freeipa: Blank args not possible for this type of request.'));
     }
 
-    const opts = requestOpts(method, params);
+    this.method = method;
+    this.args = args;
+    this.options = options;
+    this.config = config;
+    this.session = new Session(this.config.expires);
 
-    const req = https.request(opts.reqOpts, (res) => {
-      let body = '';
-      res.on('data', (chunk) => { body += chunk; });
-      res.on('end', () => {
-        if (method === URL_LOGIN) {
-          if (res.headers['set-cookie']) {
-            resolve(res.headers['set-cookie'][0]);
-          } else {
-            reject(new Error('It wasn\'t possible to get the auth cookie, check your configs.'));
-          }
-        } else {
-          try {
-            const bodyParsed = JSON.parse(body);
+    return this.getSession().then((result) => {
+      if (result !== 'cache') { this.session.addToken(this.config.auth.user, result); }
 
-            if ((!bodyParsed.error) &&
-            bodyParsed.result &&
-            bodyParsed.result.result &&
-            (!Array.isArray(bodyParsed.result.result) ||
-            (Array.isArray(bodyParsed.result.result) && bodyParsed.result.count > 0))) {
-              resolve(bodyParsed.result.result);
-            } else {
-              resolve({ error: 'No data found.' });
-            }
-          } catch (error) {
-            reject(error);
-          }
-        }
+      return this.getRequest();
+    });
+  }
+
+  /**
+   * This make HTTP/HTTPS request and return a promise without using 3rd party libs.
+   * This is for internal use only, should not be used by other modules.
+   * @param {json} params - Freeipa params to send.
+   */
+  call(endpoint, params) {
+    const opts = this.getOpts(endpoint, params);
+
+    return new Request(opts);
+  }
+
+  /**
+   * Gets a new session token to make some new requests.
+   */
+  getSession() {
+    if (this.session.isValid(this.config.auth.user)) {
+      return Promise.resolve('cache');
+    }
+    const loginArgs = { user: this.config.auth.user, password: this.config.auth.pass };
+
+    return this.call(URL_LOGIN, loginArgs);
+  }
+
+
+  /**
+   * Gets a promise using json request.
+   * @param {string} method - The method that it should call, for example, user_find.
+   * @param {array} args - Freeipa argument to send.
+   * @param {array} options - Freeipa options to send.
+   */
+  getRequest() {
+    const { method } = this;
+    const defaultArgs = { method, params: [this.args, this.options] };
+
+    return this.call(URL_JSON, defaultArgs);
+  }
+
+  /**
+   * Builds one new request options based on its path.
+   * @param {string} path - The method that it should call, for example, user_find.
+   * @param {json} args - Freeipa params to send.
+   */
+  getOpts(path, args) {
+    let data = null;
+    const myArgs = args;
+
+    // LOGIN_AUTH has a different behavior.
+    if (path === URL_LOGIN) {
+      data = qs.stringify(args);
+    } else {
+      myArgs.params[1] = _extend(myArgs.params[1], {
+        version: this.config.client_version,
       });
-    });
-
-    req.on('error', (e) => {
-      reject(new Error(`Freeipa: problem with request: ${e.message}`));
-    });
-
-    if (opts.data) {
-      req.write(opts.data);
+      data = JSON.stringify(myArgs);
     }
 
-    req.end();
-  });
-}
+    const reqOpts = {
+      method: 'POST',
+      host: this.config.server,
+      path: URL_SESSION + path,
+      ca: this.config.ca,
+      headers: {
+        accept: 'text/plain',
+        'content-type': 'application/x-www-form-urlencoded',
+        referer: `https://${this.config.server}/ipa`,
+        'Content-Length': data.length,
+      },
+      rejectUnauthorized: this.config.rejectUnauthorized,
+    };
 
-/**
- * Gets a new session token to make some new requests.
- */
-function getSession() {
-  const loginArgs = { user: Config.auth.user, password: Config.auth.pass };
+    if (path !== URL_LOGIN) {
+      reqOpts.headers = _extend(reqOpts.headers, {
+        Cookie: this.session.getTuple(this.config.auth.user).token,
+        accept: 'application/json',
+        'content-type': 'application/json',
+      });
+    }
 
-  return call(URL_LOGIN, loginArgs);
-}
-
-/**
- * Gets a promise using json request.
- * @param {string} method - The method that it should call, for example, user_find.
- * @param {array} args - Freeipa argument to send.
- * @param {array} options - Freeipa options to send.
- */
-function getRequest(method, args, options) {
-  const defaultArgs = { method, params: [args, options] };
-
-  return call(URL_JSON, defaultArgs);
-}
-
-/**
- * This class handle the requests based on method,args,options.
- * Also returns all request using promises.
- * @constructor
- * @param {string} method - The method that it should call, for example, user_find.
- * @param {array} args - Freeipa argument to send.
- * @param {array} options - Freeipa options to send.
- */
-module.exports.build = function build(method, args, options) {
-  ({ Config } = global);
-
-  if (!Config) {
-    throw new Error('node-freeipa: The module was not configured correctly');
+    return { reqOpts, data };
   }
-
-  if (Session.isValid()) {
-    return getRequest(method, args, options);
-  }
-
-  return getSession().then((result) => {
-    Session.setToken(result);
-
-    return getRequest(method, args, options);
-  });
 };
