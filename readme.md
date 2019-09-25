@@ -17,7 +17,7 @@ $ npm i --save node-freeipa
 
 ## Usage
 
-First of all import the module and configure it, the user and password are needed to autheticate to the API.
+First of all import the module and configure it, the user and password are needed to authenticate to the API.
 ```js
 const ipa = require('node-freeipa')
 
@@ -32,7 +32,7 @@ const opts = {
 ipa.configure(opts);
 ```
 
-Than make the call to desired method, below caling the json_metadata to return all methods provided by freipa server.
+Than make the call to desired method, below calling the json_metadata to return all methods provided by freipa server.
 ```js
 // Calling the method
 ipa.json_metadata.then((result, reject) => {
@@ -40,11 +40,11 @@ ipa.json_metadata.then((result, reject) => {
 });
 ```
 
-Just remember, all methods will return a promise. A list with all method can be seen in https://server/ipa/ui/#/p/apibrowser/type=command
+Just remember, all methods will return a promise. A list with all methods can be seen in https://server/ipa/ui/#/p/apibrowser/type=command
 
 ## DOCs
 
-### configure(options)
+### configure (options)
 
 #### options
 
