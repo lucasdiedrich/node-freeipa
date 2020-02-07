@@ -37,13 +37,6 @@ describe('Session Token tests', () => {
     expect(session.tokens).to.not.be.empty;
   });
 
-  // As we don't use expires anymore this is obsolete
-  // it('should use 4.4 prior validation - invalid', () => {
-  //   Session = new Session();
-  //   Session.addToken('default', FAKE_TOKEN);
-  //   expect(Session.isValid()).to.be.false;
-  // });
-
   it('should use 4.4 prior validation - valid', () => {
     const session = new Session(EXPIRES);
     session.addToken('default', FUTURE_FAKE_TOKEN);
@@ -112,10 +105,26 @@ describe('Session Token tests', () => {
     const r = session.getTuple('default');
     expect(r).to.exist;
   });
+
   it('should get a tuple but returns false', () => {
     const session = new Session(EXPIRES);
     const r = session.getTuple('default');
 
     expect(r).to.be.false;
   });
+
+  it('should be valid 1 token', () => {
+    const session = new Session(1);
+    session.addToken('default', FAKE_TOKEN);
+    expect(Object.keys(session.tokens).length).to.be.eql(1);
+  });
+
+  it('should be invalid', () => {
+    const session = new Session(1);
+    session.addToken('default', FAKE_TOKEN);
+
+    setTimeout(() => {
+      expect(session.isValid('default')).to.be.false;
+    }, 3000);
+  }).timeout(5000);
 });

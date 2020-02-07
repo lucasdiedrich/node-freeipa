@@ -31,6 +31,10 @@ module.exports = class Session {
     const expires = new Date(tuple.expires);
     const current = new Date();
 
+    if (expires <= current) {
+      this.remToken(login);
+    }
+
     return (expires > current);
   }
 
@@ -81,6 +85,14 @@ module.exports = class Session {
 
       this.exportToFile();
     }
+  }
+
+  /**
+   * Return all tokens.
+   * @method
+   */
+  getAllTokens() {
+    return this.tokens();
   }
 
   /**
