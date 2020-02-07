@@ -20,7 +20,7 @@ module.exports = class RequestBuilder {
    */
   constructor(method, args, options, config) {
     if (!method || !args || !options || !config) {
-      return Promise.reject(new Error('Freeipa: Blank args not possible for this type of request.'));
+      return Promise.resolve({ error: 'FREEIPA.NOARGS', desc: 'Blank args not possible for this type of request' });
     }
 
     this.method = method;

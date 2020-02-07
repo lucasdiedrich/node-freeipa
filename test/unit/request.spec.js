@@ -55,19 +55,19 @@ describe('Request Tests', () => {
 
   it('should throw invalid request process', () => {
     new Request({}).catch((err) => {
-      expect(err.message).to.equal('Freeipa: problem with request:');
+      expect(err.message).to.equal('Freeipa: problem with request: connect ECONNREFUSED 127.0.0.1:443');
     });
   });
 
   it('should throw no whay to get auth process', () => {
     new Request(INVALID_LOGIN_JSON).catch((err) => {
-      expect(err.message).to.equal('It wasn\'t possible to get the auth cookie.');
+      expect(err).to.equal("Freeipa: It wasn't possible to get the auth cookie.");
     });
   });
 
   it('should throw invalid response', () => {
     new Request(INVALID_REQUEST).then((result) => {
-      expect(result.error).to.be.true;
+      expect(result.error).to.equal('FREEIPA.AUTH_ERROR');
     });
   });
 });

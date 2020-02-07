@@ -22,7 +22,7 @@ describe('Request Builder Tests', () => {
 
   it('should reject the build process', () => {
     new RequestBuilder().catch((err) => {
-      expect(err.message).to.equal('Freeipa: Blank args not possible for this type of request');
+      expect(err.message).to.equal('Freeipa: Blank args not possible for this type of request.');
     });
   });
 

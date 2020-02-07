@@ -49,11 +49,11 @@ class Main {
    * @param {array} args - Freeipa argument to send.
    * @param {json} options - Freeipa options to send.
    */
-  call(method, args, opts) {
-    console.log('!!! NODE-FREEIPA: This method is DEPRECATED, check manual to see new usage... !!!');
-    console.log('!!! NODE-FREEIPA: Redirecting... !!!');
-    return this[method](args, opts, this);
-  }
+  // call(method, args, opts) {
+  //   console.log('!!! NODE-FREEIPA: This method is DEPRECATED, check manual to see new usage... !!!');
+  //   console.log('!!! NODE-FREEIPA: Redirecting... !!!');
+  //   return this[method](args, opts, this);
+  // }
 }
 
 module.exports = new ExtendableProxy(new Main());

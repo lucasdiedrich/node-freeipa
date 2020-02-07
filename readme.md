@@ -35,7 +35,7 @@ ipa.configure(opts);
 Than make the call to desired method, below calling the json_metadata to return all methods provided by freipa server.
 ```js
 // Calling the method
-ipa.json_metadata.then((result, reject) => {
+ipa.json_metadata.then(result => {
   console.log(result);
 });
 ```
@@ -95,6 +95,19 @@ ipa.user_find(['mylogin']).then(result => { });
 // searching by criteria only and option
 ipa.user_find(['mylogin'], {mail: 'mylogin@domain.com'}).then(result => { });
 ```
+
+### Freeipa Error codes:
+
+These are padronized erros returning by any of the requests. Every error are returned from resolve, reject was discarded on version 2.2+.
+
+| ERROR  | DESC
+|---|---|
+|  FREEIPA.NOARGS | No options was passed to Request Builder  |
+|  FREEIPA.NO_DATA | No data returned  |
+|  FREEIPA.AUTH_ERROR | Invalid authentication or json parse  |
+|  FREEIPA.REQUEST_ERROR | Error during the request  |
+|  FREEIPA.UNHANDLED_ERROR | Unhandled error  |
+|  <IPA.ERROR> | Returned from Freeipa Servers |
 
 ### Freeipa API usage:
 

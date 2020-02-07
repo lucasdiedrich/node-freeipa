@@ -2,7 +2,7 @@
 const https = require('https');
 
 const URL_LOGIN = '/login_password';
-
+const FAILED_AUTH_PARSE = 'Unexpected token < in JSON at position 0';
 module.exports = class Request {
   /**
    * Construct one new Request promise.
@@ -15,7 +15,7 @@ module.exports = class Request {
       const req = this.getRequest(resolve, reject);
 
       req.on('error', (e) => {
-        reject(new Error(`Freeipa: problem with request: ${e.message}`));
+        resolve({ error: 'FREEIPA.REQUEST_ERROR', desc: e.message });
       });
 
       if (opts.data) {
@@ -25,6 +25,7 @@ module.exports = class Request {
       req.end();
     });
   }
+
   /**
    * Return an request object to be used by the promise. This request is what
    * handles the data returned from Freeipa server.
@@ -53,15 +54,19 @@ module.exports = class Request {
             }
 
             if (bodyParsed.result.result &&
-            (!Array.isArray(bodyParsed.result.result) ||
-            (Array.isArray(bodyParsed.result.result) && bodyParsed.result.count > 0))) {
+              (!Array.isArray(bodyParsed.result.result) ||
+                (Array.isArray(bodyParsed.result.result) && bodyParsed.result.count > 0))) {
               resolve(bodyParsed.result.result);
             } else {
-              resolve({ error: 'No data found.', detail: bodyParsed.result });
+              resolve({ error: 'FREEIPA.NO_DATA', detail: bodyParsed.result });
             }
           }
         } catch (e) {
-          reject(new Error(`Freeipa: problem with request: ${e.message}`));
+          resolve({
+            error: e.message.includes(FAILED_AUTH_PARSE) ?
+              'FREEIPA.AUTH_ERROR' : 'FREEIPA.UNHANDLED_ERROR',
+            desc: e.message,
+          });
         }
       });
     });
