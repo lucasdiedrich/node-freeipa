@@ -41,19 +41,6 @@ class Main {
   configure(_options) {
     this.config = new Config(_options);
   }
-
-  /**
-   * The caller method which calls the informed METHOD to the final request.
-   * @method
-   * @param {string} method - The method that it should call, for example, user_find.
-   * @param {array} args - Freeipa argument to send.
-   * @param {json} options - Freeipa options to send.
-   */
-  call(method, args, opts) {
-    console.log('!!! NODE-FREEIPA: This method is DEPRECATED, check manual to see new usage... !!!');
-    console.log('!!! NODE-FREEIPA: Redirecting... !!!');
-    return this[method](args, opts, this);
-  }
 }
 
 module.exports = new ExtendableProxy(new Main());

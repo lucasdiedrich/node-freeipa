@@ -20,15 +20,4 @@ describe('Client tests', () => {
   it('should the new client be defined', () => {
     expect(ipa.user_find).to.exist;
   });
-
-  it('should call exists and be an function', () => {
-    expect(ipa.call).to.be.an.instanceof(Function);
-  });
-
-  it('should call user_find redirect to new client', () => {
-    ipa.configure(global.fx.config);
-
-    ipa.call('user_find');
-    expect(userFind.called).to.be.true;
-  });
 });

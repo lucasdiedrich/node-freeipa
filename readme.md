@@ -38,6 +38,10 @@ Than make the call to desired method, below calling the json_metadata to return 
 ipa.json_metadata.then(result => {
   console.log(result);
 });
+
+// Using async/await
+let result = await ipa.json_metadata();
+console.log(result);
 ```
 
 Just remember, all methods will return a promise. A list with all methods can be seen in https://server/ipa/ui/#/p/apibrowser/type=command
