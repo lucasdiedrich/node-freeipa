@@ -1,6 +1,6 @@
 {
   "name": "node-freeipa",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "A module to consume Freeipa Server API using promises.",
   "license": "MIT",
   "repository": "https://github.com/lucasdiedrich/node-freeipa",
