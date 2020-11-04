@@ -101,7 +101,7 @@ module.exports = class RequestBuilder {
         accept: 'text/plain',
         'content-type': 'application/x-www-form-urlencoded',
         referer: `https://${this.config.server}/ipa`,
-        'Content-Length': data.length,
+        'Content-Length': Buffer.byteLength(data.length),
       },
       rejectUnauthorized: this.config.rejectUnauthorized,
     };
