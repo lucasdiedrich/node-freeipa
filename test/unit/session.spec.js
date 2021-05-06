@@ -120,9 +120,8 @@ describe('Session Token tests', () => {
   });
 
   it('should be invalid', () => {
-    const session = new Session(1);
+    const session = new Session(0);
     session.addToken('default', FAKE_TOKEN);
-
     setTimeout(() => {
       expect(session.isValid('default')).to.be.false;
     }, 3000);
