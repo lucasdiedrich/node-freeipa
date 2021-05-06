@@ -16,6 +16,7 @@ jobs:
       - run: npm test
       
   bump-version:
+    needs: build
     name: "Patch Version on master"
     runs-on: ubuntu-latest
 
@@ -40,7 +41,7 @@ jobs:
         run: cat ./package.json      
 
   publish-npm:
-    needs: build
+    needs: bump-version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
