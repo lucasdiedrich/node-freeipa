@@ -2,8 +2,8 @@
 
 [![CodeQL](https://github.com/lucasdiedrich/node-freeipa/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/lucasdiedrich/node-freeipa/actions/workflows/codeql-analysis.yml)
 [![Coverage Status](https://coveralls.io/repos/github/lucasdiedrich/node-freeipa/badge.svg)](https://coveralls.io/github/lucasdiedrich/node-freeipa)
-[![npm](https://img.shields.io/npm/dw/localeval.svg)](https://www.npmjs.com/package/node-freeipa)
-[![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/node-freeipa)
+[![npm](https://img.shields.io/npm/dm/node-freeipa)](https://img.shields.io/npm/dm/node-freeipa)
+[![npm](https://img.shields.io/npm/v/node-freeipa)](https://www.npmjs.com/package/node-freeipa)
 ![npm](https://img.shields.io/npm/l/express.svg)
 
 > A module to consume Freeipa server JSON_RPC API.
