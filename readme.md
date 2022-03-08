@@ -1,6 +1,6 @@
 # node-freeipa
 
-[![Build Status](https://travis-ci.org/lucasdiedrich/node-freeipa.svg?branch=master)](https://travis-ci.org/lucasdiedrich/node-freeipa)
+[![CodeQL](https://github.com/lucasdiedrich/node-freeipa/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/lucasdiedrich/node-freeipa/actions/workflows/codeql-analysis.yml)
 [![Coverage Status](https://coveralls.io/repos/github/lucasdiedrich/node-freeipa/badge.svg)](https://coveralls.io/github/lucasdiedrich/node-freeipa)
 [![npm](https://img.shields.io/npm/dw/localeval.svg)](https://www.npmjs.com/package/node-freeipa)
 [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/node-freeipa)
