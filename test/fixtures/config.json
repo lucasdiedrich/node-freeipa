@@ -1,8 +1,10 @@
 {
   "server": "ipa.demo1.freeipa.org",
   "auth": {
-      "user": "helpdesk",
-      "pass": "Secret123"
+    "user": "helpdesk",
+    "pass": "Secret123"
   },
-  "configure_client": false
+  "configure_client": false,
+  "cacheFolder": "fixtures-custom-cache-path",
+  "expires": 1440
 }

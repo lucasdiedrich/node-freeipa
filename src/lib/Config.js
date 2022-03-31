@@ -1,4 +1,5 @@
 const { _extend } = require('util');
+const path = require('path');
 
 const AUTH_PASS = 'auth';
 const AUTH_KRB = 'kerberos';
@@ -18,6 +19,7 @@ const OPTIONS = {
   rejectUnauthorized: true,
   client_version: '2.156',
   expires: 1439,
+  cacheFolder: path.join(__dirname, '../../', '.tmp'),
 };
 
 /**

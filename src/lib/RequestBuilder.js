@@ -27,7 +27,7 @@ module.exports = class RequestBuilder {
     this.args = args;
     this.options = options;
     this.config = config;
-    this.session = new Session(this.config.expires);
+    this.session = new Session(config);
 
     return this.getSession().then((result) => {
       if (result !== 'cache') { this.session.addToken(this.config.auth.user, result); }

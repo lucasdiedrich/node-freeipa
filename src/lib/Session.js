@@ -1,19 +1,19 @@
 
 const fs = require('fs');
-const path = require('path');
-
-const CACHE_FOLDER = path.join(__dirname, '../../', '.tmp');
-const CACHE_PATH = `${CACHE_FOLDER}/freeipa.cookie.json`;
 
 module.exports = class Session {
   /**
    * Construct one new Session
    * @constructor
-   * @param {integer} expires - The time in minutes of the expired cookie.
+   * @param {Config} config - Configuration file using OPTs in initialization
    */
-  constructor(expires) {
+  constructor(config) {
+    const { expires, cacheFolder } = config;
     this.tokens = {};
     this.defaultExpires = expires;
+
+    this.CACHE_FOLDER = cacheFolder;
+    this.CACHE_PATH = `${cacheFolder}/freeipa.cookie.json`;
 
     this.loadFromFile();
   }
@@ -100,10 +100,10 @@ module.exports = class Session {
    * @method
    */
   exportToFile() {
-    if (!fs.existsSync(CACHE_FOLDER)) {
-      fs.mkdirSync(CACHE_FOLDER);
+    if (!fs.existsSync(this.CACHE_FOLDER)) {
+      fs.mkdirSync(this.CACHE_FOLDER);
     }
-    fs.writeFileSync(CACHE_PATH, JSON.stringify(this.tokens));
+    fs.writeFileSync(this.CACHE_PATH, JSON.stringify(this.tokens));
   }
 
   /**
@@ -111,8 +111,8 @@ module.exports = class Session {
    * @method
    */
   loadFromFile() {
-    if (fs.existsSync(CACHE_PATH)) {
-      const cache = JSON.parse(fs.readFileSync(CACHE_PATH));
+    if (fs.existsSync(this.CACHE_PATH)) {
+      const cache = JSON.parse(fs.readFileSync(this.CACHE_PATH));
       this.tokens = cache;
     }
   }

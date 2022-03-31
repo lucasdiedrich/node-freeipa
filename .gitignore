@@ -8,3 +8,5 @@ cache
 
 .tmp
 .vscode
+
+fixtures-custom-cache-path
