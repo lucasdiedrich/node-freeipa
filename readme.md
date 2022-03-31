@@ -65,6 +65,7 @@ var options = {
 	},
 	ca: false, //Your Freeipa's CA loaded with fs
 	expires: 1440, // Time in minutes to expiration of cookie/auth.
+	cacheFolder: '.tmp', // Location where the cookie cache will be saved. Default: inside node_modules of the app.
 };
 ```
 
