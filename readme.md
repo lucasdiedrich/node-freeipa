@@ -35,7 +35,7 @@ ipa.configure(opts);
 Than make the call to desired method, below calling the json_metadata to return all methods provided by freipa server.
 ```js
 // Calling the method
-ipa.json_metadata.then(result => {
+ipa.json_metadata().then(result => {
   console.log(result);
 });
 
